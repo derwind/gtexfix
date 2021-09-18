@@ -22,11 +22,11 @@ print('Input file:',args.filename)
 with open(args.filename, 'r') as fin:
     source = fin.read()
 with open ('gtexfix_comments', 'rb') as fp:
-    comments = pickle.load(fp)
+    comments = {token_id: v for token_id, v in enumerate(pickle.load(fp))}
 with open ('gtexfix_commands', 'rb') as fp:
-    commands = pickle.load(fp)
+    commands = {token_id: v for token_id, v in enumerate(pickle.load(fp))}
 with open ('gtexfix_latex', 'rb') as fp:
-    latex = pickle.load(fp)
+    latex = {token_id: v for token_id, v in enumerate(pickle.load(fp))}
 
 ### Replace weird characters introduced by translation
 trtext=re.sub('\u200B',' ',source)
@@ -46,21 +46,21 @@ for m in re.finditer('\[ *[012][\.\,][0-9]+\]',trtext):
     t=int( re.search('(?<=[\[ ])[012](?=[\.\,])',m.group()).group() )
     n=int( re.search('(?<=[\.\,])[0-9]+(?=\])',m.group()).group() )
     if(t==1):
-        if(n<nl):
-            print('Token ',m.group(),'found in place of [%d.%d]. Edit manually and run again.'%(t,nl))
-            break
-        while(nl!=n):
-            corrupted.append('[%d.%d]'%(t,nl))
-            nl+=1
+        #if(n<nl):
+        #    print('Token ',m.group(),'found in place of [%d.%d]. Edit manually and run again.'%(t,nl))
+        #    break
+        #while(nl!=n):
+        #    corrupted.append('[%d.%d]'%(t,nl))
+        #    nl+=1
         newtext += trtext[here:m.start()] + latex[n]
         nl+=1
     elif(t==2):
-        if(n<nc):
-            print('Token ',m.group(),'found in place of [%d.%d]. Edit manually and run again.'%(t,nc))
-            break
-        while(nc!=n):
-            corrupted.append('[%d.%d]'%(t,nc))
-            nc+=1
+        #if(n<nc):
+        #    print('Token ',m.group(),'found in place of [%d.%d]. Edit manually and run again.'%(t,nc))
+        #    break
+        #while(nc!=n):
+        #    corrupted.append('[%d.%d]'%(t,nc))
+        #    nc+=1
         newtext += trtext[here:m.start()] + commands[n]
         nc+=1
     here=m.end()
@@ -73,9 +73,9 @@ ncomment=0
 newtext=''
 for m in re.finditer('___GTEXFIXCOMMENT[0-9]*___',trtext):
     n=int( re.search('[0-9]+',m.group()).group() )
-    if(n!=ncomment):
-        print('Comment token ',m.group(),'is broken. Stopping.')
-        break
+    #if(n!=ncomment):
+    #    print('Comment token ',m.group(),'is broken. Stopping.')
+    #    break
     newtext += trtext[here:m.start()] + comments[n]
     ncomment+=1
     here=m.end()
