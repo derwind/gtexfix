@@ -10,13 +10,13 @@ import pickle
 import argparse
 
 def convert_from(filename):
-    if(re.search('.txt$',args.filename)==None):
+    if(re.search('.txt$',filename)==None):
         sys.exit('The input should be .txt file. Exit.')
 
-    print('Input file:',args.filename)
+    print('Input file:',filename)
 
     ### Load LaTeX data from binary files
-    with open(args.filename, 'r') as fin:
+    with open(filename, 'r') as fin:
         source = fin.read()
     with open ('gtexfix_comments', 'rb') as fp:
         comments = {token_id: v for token_id, v in enumerate(pickle.load(fp))}
@@ -80,7 +80,7 @@ def convert_from(filename):
     trtext=newtext
 
     ### Save the processed output to .tex file
-    output_filename = re.sub('.txt$','.tex',args.filename)
+    output_filename = re.sub('.txt$','.tex',filename)
     with open(output_filename, 'w') as translation_file:
         translation_file.write(trtext)
     print('Output file:',output_filename)
@@ -93,7 +93,7 @@ def convert_from(filename):
         for c in corrupted:
             print(c,end=' ')
         print()
-        print('To improve the output manually change the corrupted tokens in file',args.filename,'and run   from.py again.')
+        print('To improve the output manually change the corrupted tokens in file',filename,'and run   from.py again.')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
