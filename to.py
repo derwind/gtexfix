@@ -105,7 +105,8 @@ with open('gtexfix_commands', 'wb') as fp:
     pickle.dump(commands, fp)
 
 ### Save the processed output to .txt file
-limit=30000 # Estimated Google Translate character limit
+#limit=30000 # Estimated Google Translate character limit
+limit=100000
 filebase = re.sub('.tex$','',args.filename)
 start=0
 npart=0
