@@ -5,6 +5,7 @@ import unittest
 
 file_dir = os.path.abspath(os.path.dirname(__file__))
 temp_files = list(map(lambda v: os.path.join(file_dir, v), [
+    "example.tex",
     "example_0.txt",
     "example_0.tex",
     "gtexfix_commands",
