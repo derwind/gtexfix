@@ -21,8 +21,10 @@ def convert_from(filename):
     with open ('gtexfix_comments', 'rb') as fp:
         comments = {token_id: v for token_id, v in enumerate(pickle.load(fp))}
     with open ('gtexfix_commands', 'rb') as fp:
+        # [2.x]
         commands = {token_id: v for token_id, v in enumerate(pickle.load(fp))}
     with open ('gtexfix_latex', 'rb') as fp:
+        # [1.x]
         latex = {token_id: v for token_id, v in enumerate(pickle.load(fp))}
 
     ### Replace weird characters introduced by translation
@@ -50,6 +52,7 @@ def convert_from(filename):
             #    corrupted.append('[%d.%d]'%(t,nl))
             #    nl+=1
             newtext += trtext[here:m.start()] + latex[n]
+            del latex[n]
             nl+=1
         elif(t==2):
             #if(n<nc):
@@ -59,6 +62,7 @@ def convert_from(filename):
             #    corrupted.append('[%d.%d]'%(t,nc))
             #    nc+=1
             newtext += trtext[here:m.start()] + commands[n]
+            del commands[n]
             nc+=1
         here=m.end()
     newtext += trtext[here:]
@@ -74,6 +78,7 @@ def convert_from(filename):
         #    print('Comment token ',m.group(),'is broken. Stopping.')
         #    break
         newtext += trtext[here:m.start()] + comments[n]
+        del comments[n]
         ncomment+=1
         here=m.end()
     newtext += trtext[here:]
@@ -86,12 +91,19 @@ def convert_from(filename):
     print('Output file:',output_filename)
 
     ### Report the corrupted tokens
-    if(corrupted==[]):
+    #if(corrupted==[]):
+    if not comments and not commands and not latex:
         print('No corrupted tokens. The translation is ready.')
     else:
         print('Corrupted tokens detected:',end=' ')
-        for c in corrupted:
-            print(c,end=' ')
+        #for c in corrupted:
+        #    print(c,end=' ')
+        for c in sorted(latex):
+            print(f'[1.{c}]', end= ' ')
+        for c in sorted(commands):
+            print(f'[2.{c}]', end= ' ')
+        for c in sorted(comments):
+            print(f'___GTEXFIXCOMMENT{c}___', end= ' ')
         print()
         print('To improve the output manually change the corrupted tokens in file',filename,'and run   from.py again.')
 
