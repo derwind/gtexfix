@@ -70,6 +70,13 @@ def convert_to(filename):
         +r'|\\end{ *displaymath\** *}|\\end{ *gather\** *}|\\\]',text):
         end_values.append(m.end())
     nitems=len(start_values)
+    if len(end_values) != nitems:
+        min_len = min(len(start_values), len(end_values))
+        for start, end in zip(start_values[:min_len], end_values[:min_len]):
+            print(start, text[start:start+70])
+            print('...')
+            print(text[end-70:end], end)
+            print('-'*20)
     assert(len(end_values)==nitems)
     if(nitems>0):
         newtext=text[:start_values[0]]
