@@ -41,9 +41,9 @@ def convert_from(filename):
     nl=0
     nc=0
     corrupted=[]
-    for m in re.finditer(r'\[ *[012][\.\,][0-9]+\]',trtext):
-        t=int( re.search(r'(?<=[\[ ])[012](?=[\.\,])',m.group()).group() )
-        n=int( re.search(r'(?<=[\.\,])[0-9]+(?=\])',m.group()).group() )
+    for m in re.finditer(r'\[ *[012][\.][0-9]+\]',trtext):
+        t=int( re.search(r'(?<=[\[ ])[012](?=[\.])',m.group()).group() )
+        n=int( re.search(r'(?<=[\.])[0-9]+(?=\])',m.group()).group() )
         if(t==1):
             #if(n<nl):
             #    print('Token ',m.group(),'found in place of [%d.%d]. Edit manually and run again.'%(t,nl))
