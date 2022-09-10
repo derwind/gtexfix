@@ -5,9 +5,13 @@
 # GNU General Public License v3.0
 #-----------------------------------------
 import re
+import regex
 import sys
 import pickle
 import argparse
+
+def make_spaces(text):
+    return regex.sub(r'(\\[a-zA-Z0-9]+)([\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}])', r'\1 \2', text)
 
 def convert_from(filename):
     if(re.search('.txt$',filename)==None):
@@ -66,7 +70,7 @@ def convert_from(filename):
             nc+=1
         here=m.end()
     newtext += trtext[here:]
-    trtext=newtext
+    trtext=make_spaces(newtext)
 
     ### Restore comments
     here=0
