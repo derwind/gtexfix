@@ -112,7 +112,7 @@ def convert_to(filename):
 
     ### Save the processed output to .txt file
     #limit=30000 # Estimated Google Translate character limit
-    limit=100000
+    limit=200000
     filebase = re.sub('.tex$','',filename)
     start=0
     npart=0
