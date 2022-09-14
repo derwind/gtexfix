@@ -37,7 +37,8 @@ def convert_from(filename):
     ### Fix spacing
     trtext = re.sub(r'\\ ',r'\\',trtext)
     trtext = re.sub(' ~ ','~',trtext)
-    trtext = re.sub(' {','{',trtext)
+    # This process will be executed later -> [Adjust space before parenthesis]
+    #trtext = re.sub(' {','{',trtext)
 
     ### Restore LaTeX and formulas
     here=0
@@ -65,7 +66,10 @@ def convert_from(filename):
             #while(nc!=n):
             #    corrupted.append('[%d.%d]'%(t,nc))
             #    nc+=1
-            newtext += trtext[here:m.start()] + commands[n]
+            partial_text = trtext[here:m.start()] + commands[n]
+            # [Adjust space before parenthesis]
+            partial_text = re.sub(r' {([^\\])',r'{\1',partial_text)
+            newtext += partial_text
             del commands[n]
             nc+=1
         here=m.end()
