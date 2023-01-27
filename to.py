@@ -62,7 +62,7 @@ def convert_to(filename):
     start_values=[]
     end_values=[]
     for m in re.finditer(r'\\begin{ *equation\** *}|\\begin{ *align\** *}|\\begin{ *figure\** *}|\\begin{ *eqnarray\** *}|\\begin{    *multline\** *}'
-        +r'|\\begin{ *thebibliography *}|\\begin{ *verbatim\** *}|\\begin{ *table\** *}|\\begin{    *subequations\** *}|\\begin{ *align\** *}'
+        +r'|\\begin{ *thebibliography *}|\\begin{ *verbatim\** *}|\\begin{ *table\** *}|\\begin{ *subequations\** *}|\\begin{ *align\** *}'
         +r'|\\begin{ *displaymath\** *}|\\begin{ *gather\** *}',text):
         start_values.append(m.start())
     for m in re.finditer(r'\\end{ *equation\** *}|\\end{ *align\** *}|\\end{ *figure\** *}|\\end{ *eqnarray\** *}|\\end{    *multline\** *}'
@@ -70,14 +70,18 @@ def convert_to(filename):
         +r'|\\end{ *displaymath\** *}|\\end{ *gather\** *}',text):
         end_values.append(m.end())
     nitems=len(start_values)
+
+    ### report problems if any exists
     if len(end_values) != nitems:
         min_len = min(len(start_values), len(end_values))
         for start, end in zip(start_values[:min_len], end_values[:min_len]):
             print(start, text[start:start+70])
             print('...')
             print(text[end-70:end], end)
+            assert start <= end, f'{len(end_values)=}, {nitems=}'
             print('-'*20)
-    assert(len(end_values)==nitems)
+    assert len(end_values)==nitems, [len(end_values), nitems]
+
     if(nitems>0):
         newtext=text[:start_values[0]]
         for neq in range(nitems-1):
