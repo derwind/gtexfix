@@ -9,6 +9,9 @@ import sys
 import pickle
 import argparse
 
+# It's usually difficult to process nested begin-end such as '\begin{subequations}\begin{align}...\end{align}\end{subequations}'.
+ignore_subequations = True
+
 def convert_to(filename):
     if(re.search('.tex$',filename)==None):
         sys.exit('The input should be .tex file. Exit.')
@@ -61,13 +64,21 @@ def convert_to(filename):
     ### Hide LaTeX constructs \begin{...} ... \end{...}
     start_values=[]
     end_values=[]
-    for m in re.finditer(r'\\begin{ *equation\** *}|\\begin{ *align\** *}|\\begin{ *figure\** *}|\\begin{ *eqnarray\** *}|\\begin{ *multline\** *}'
-        +r'|\\begin{ *thebibliography *}|\\begin{ *verbatim\** *}|\\begin{ *table\** *}|\\begin{ *subequations\** *}|\\begin{ *align\** *}'
-        +r'|\\begin{ *displaymath\** *}|\\begin{ *gather\** *}',text):
+
+    begin_patterns = r'\\begin{ *equation\** *}|\\begin{ *align\** *}|\\begin{ *figure\** *}|\\begin{ *eqnarray\** *}|\\begin{ *multline\** *}' \
+        +r'|\\begin{ *thebibliography *}|\\begin{ *verbatim\** *}|\\begin{ *table\** *}|\\begin{ *align\** *}' \
+        +r'|\\begin{ *displaymath\** *}|\\begin{ *gather\** *}'
+    if not ignore_subequations:
+        begin_patterns += r'|\\begin{ *subequations\** *}'
+    end_patterns = r'\\end{ *equation\** *}|\\end{ *align\** *}|\\end{ *figure\** *}|\\end{ *eqnarray\** *}|\\end{ *multline\** *}' \
+        +r'|\\end{ *thebibliography *}|\\end{ *verbatim\** *}|\\end{ *table\** *}|\\end{ *align\** *}' \
+        +r'|\\end{ *displaymath\** *}|\\end{ *gather\** *}'
+    if not ignore_subequations:
+        end_patterns += r'|\\end{ *subequations\** *}'
+
+    for m in re.finditer(begin_patterns,text):
         start_values.append(m.start())
-    for m in re.finditer(r'\\end{ *equation\** *}|\\end{ *align\** *}|\\end{ *figure\** *}|\\end{ *eqnarray\** *}|\\end{ *multline\** *}'
-        +r'|\\end{ *thebibliography *}|\\end{ *verbatim\** *}|\\end{ *table\** *}|\\end{ *subequations\** *}|\\end{ *align\** *}'
-        +r'|\\end{ *displaymath\** *}|\\end{ *gather\** *}',text):
+    for m in re.finditer(end_patterns,text):
         end_values.append(m.end())
     nitems=len(start_values)
 
