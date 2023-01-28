@@ -22,7 +22,7 @@ def convert_to(filename):
         source = source_file.read()
 
     ### Search for possible token conflicts
-    conflicts=re.findall('\[ *[012][\.][0-9]+\]',source)
+    conflicts=re.findall(r'\\[ *[012][\\.][0-9]+\\]',source)
     if(conflicts!=[]):
         print('Token conflicts detected: ',conflicts)
         sys.exit('Tokens may overlap with the content. Change tokens or remove the source of conflict.')
