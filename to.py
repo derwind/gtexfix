@@ -65,12 +65,12 @@ def convert_to(filename):
     start_values=[]
     end_values=[]
 
-    begin_patterns = r'\\begin{ *equation\** *}|\\begin{ *align\** *}|\\begin{ *figure\** *}|\\begin{ *eqnarray\** *}|\\begin{ *multline\** *}' \
+    begin_patterns = r'\\begin{ *equation\** *}|\\begin{ *align\** *}|\\begin{ *alignat\** *}|\\begin{ *figure\** *}|\\begin{ *eqnarray\** *}|\\begin{ *multline\** *}' \
         +r'|\\begin{ *thebibliography *}|\\begin{ *verbatim\** *}|\\begin{ *table\** *}|\\begin{ *align\** *}' \
         +r'|\\begin{ *displaymath\** *}|\\begin{ *gather\** *}'
     if not ignore_subequations:
         begin_patterns += r'|\\begin{ *subequations\** *}'
-    end_patterns = r'\\end{ *equation\** *}|\\end{ *align\** *}|\\end{ *figure\** *}|\\end{ *eqnarray\** *}|\\end{ *multline\** *}' \
+    end_patterns = r'\\end{ *equation\** *}|\\end{ *align\** *}|\\end{ *alignat\** *}|\\end{ *figure\** *}|\\end{ *eqnarray\** *}|\\end{ *multline\** *}' \
         +r'|\\end{ *thebibliography *}|\\end{ *verbatim\** *}|\\end{ *table\** *}|\\end{ *align\** *}' \
         +r'|\\end{ *displaymath\** *}|\\end{ *gather\** *}'
     if not ignore_subequations:
