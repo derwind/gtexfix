@@ -12,6 +12,20 @@ import argparse
 # It's usually difficult to process nested begin-end such as '\begin{subequations}\begin{align}...\end{align}\end{subequations}'.
 ignore_subequations = True
 
+# \ref{...} or \cite{...} or \footnote{...} etc. are also processed.
+process_no_end_patterns = True
+
+def search_right_curly_bracket(text, start):
+    bracket_count = 0
+    for i, c in enumerate(text[start:]):
+        if c == '{':
+            bracket_count += 1
+        if c == '}':
+            bracket_count -= 1
+            if bracket_count <= 0:
+                return start + i + 1
+    return start + 1
+
 def convert_to(filename):
     if(re.search('.tex$',filename)==None):
         sys.exit('The input should be .tex file. Exit.')
@@ -65,22 +79,38 @@ def convert_to(filename):
     start_values=[]
     end_values=[]
 
-    begin_patterns = r'\\begin{ *equation\** *}|\\begin{ *align\** *}|\\begin{ *alignat\** *}|\\begin{ *figure\** *}|\\begin{ *eqnarray\** *}|\\begin{ *multline\** *}' \
-        +r'|\\begin{ *thebibliography *}|\\begin{ *verbatim\** *}|\\begin{ *table\** *}|\\begin{ *align\** *}' \
-        +r'|\\begin{ *displaymath\** *}|\\begin{ *gather\** *}'
+    begin_patterns = r'\\begin{ *(equation\**) *}|\\begin{ *(align\**) *}|\\begin{ *(alignat\**) *}|\\begin{ *(figure\**) *}|\\begin{ *(eqnarray\**) *}|\\begin{ *(multline\**) *}' \
+        +r'|\\begin{ *(thebibliography) *}|\\begin{ *(verbatim\**) *}|\\begin{ *(table\**) *}|\\begin{ *(align\**) *}' \
+        +r'|\\begin{ *(displaymath\**) *}|\\begin{ *(gather\**) *}'
     if not ignore_subequations:
-        begin_patterns += r'|\\begin{ *subequations\** *}'
+        begin_patterns += r'|\\begin{ *(subequations\**) *}'
+    if process_no_end_patterns:
+        begin_patterns += r'|\\[a-z]*(ref){.*?}|\\(cite){.*?}|\\(footnote){.*?}'
     end_patterns = r'\\end{ *equation\** *}|\\end{ *align\** *}|\\end{ *alignat\** *}|\\end{ *figure\** *}|\\end{ *eqnarray\** *}|\\end{ *multline\** *}' \
         +r'|\\end{ *thebibliography *}|\\end{ *verbatim\** *}|\\end{ *table\** *}|\\end{ *align\** *}' \
         +r'|\\end{ *displaymath\** *}|\\end{ *gather\** *}'
     if not ignore_subequations:
         end_patterns += r'|\\end{ *subequations\** *}'
 
-    for m in re.finditer(begin_patterns,text):
+    no_end_patterns = {}
+    for i, m in enumerate(re.finditer(begin_patterns,text)):
+        # equation, align, alignat, etc.
+        key = next((item for item in m.groups() if item), None)
+        if process_no_end_patterns:
+            if key.startswith('ref') or key.startswith('cite') or key.startswith('footnote'):
+                no_end_patterns[i] = m.start()
         start_values.append(m.start())
-    for m in re.finditer(end_patterns,text):
-        end_values.append(m.end())
     nitems=len(start_values)
+    iter = re.finditer(end_patterns,text)
+    for i in range(nitems):
+        # if next pattern has no end pattern
+        if process_no_end_patterns and i in no_end_patterns:
+            start = no_end_patterns[i]
+            end = search_right_curly_bracket(text, start)
+            end_values.append(end)
+        else:
+            m = next(iter)
+            end_values.append(m.end())
 
     ### report problems if any exists
     if len(end_values) != nitems:
