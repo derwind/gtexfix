@@ -85,7 +85,7 @@ def convert_to(filename):
     if not ignore_subequations:
         begin_patterns += r'|\\begin{ *(subequations\**) *}'
     if process_no_end_patterns:
-        begin_patterns += r'|\\[a-z]*(ref){.*?}|\\(cite){.*?}|\\(footnote){.*?}'
+        begin_patterns += r'|\\[a-z]*(ref){.*?}|\\(cite){.*?}|\\(footnote){.*?}|\\(index){.*?}'
     end_patterns = r'\\end{ *equation\** *}|\\end{ *align\** *}|\\end{ *alignat\** *}|\\end{ *figure\** *}|\\end{ *eqnarray\** *}|\\end{ *multline\** *}' \
         +r'|\\end{ *thebibliography *}|\\end{ *verbatim\** *}|\\end{ *table\** *}|\\end{ *align\** *}' \
         +r'|\\end{ *displaymath\** *}|\\end{ *gather\** *}'
@@ -97,7 +97,7 @@ def convert_to(filename):
         # equation, align, alignat, etc.
         key = next((item for item in m.groups() if item), None)
         if process_no_end_patterns:
-            if key.startswith('ref') or key.startswith('cite') or key.startswith('footnote'):
+            if key in ['ref', 'cite', 'footnote', 'index']:
                 no_end_patterns[i] = m.start()
         start_values.append(m.start())
     nitems=len(start_values)
