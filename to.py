@@ -96,7 +96,8 @@ def convert_to(filename):
 
     no_end_patterns = {}
     in_figure = False
-    for i, m in enumerate(re.finditer(begin_patterns,text)):
+    i = 0
+    for m in re.finditer(begin_patterns,text):
         # equation, align, alignat, etc.
         key = next((item for item in m.groups() if item), None)
         if in_figure and 'end' in key and 'figure' in key:
@@ -113,6 +114,7 @@ def convert_to(filename):
 
         start_values.append(m.start())
         in_figure = key == 'figure'
+        i += 1
 
     nitems=len(start_values)
     iter = re.finditer(end_patterns,text)
