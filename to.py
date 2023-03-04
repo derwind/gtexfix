@@ -178,8 +178,11 @@ def convert_to(filename):
     print('Output file:',output_filename)
     print('Supply the output file(s) to Google Translate')
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('filename')
     args = parser.parse_args()
     convert_to(args.filename)
+
+if __name__ == '__main__':
+    main()

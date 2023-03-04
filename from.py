@@ -115,8 +115,11 @@ def convert_from(filename):
         print()
         print('To improve the output manually change the corrupted tokens in file',filename,'and run   from.py again.')
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('filename')
     args = parser.parse_args()
     convert_from(args.filename)
+
+if __name__ == '__main__':
+    main()
