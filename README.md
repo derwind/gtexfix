@@ -54,3 +54,8 @@ There is an alternative tool GoogleTranslate4LyX (https://wiki.lyx.org/Tools/Goo
 
 The token numbers can be unpredictably changed by Google Translate: e.g. 396 in the original can become 369 after translation for no apparent reason. Although, the corrupted tokens are reported, the ``notranslate`` tags in HTML could in principle give a more stable solution than the use of tokens.
 
+**Install from GitHub**
+
+```sh
+pip install git+https://github.com/derwind/gtexfix@japanese
+```
