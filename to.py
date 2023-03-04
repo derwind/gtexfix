@@ -79,13 +79,15 @@ def convert_to(filename):
     start_values=[]
     end_values=[]
 
-    begin_patterns = r'\\begin{ *(equation\**) *}|\\begin{ *(align\**) *}|\\begin{ *(alignat\**) *}|\\begin{ *(figure\**) *}|\\begin{ *(eqnarray\**) *}|\\begin{ *(multline\**) *}' \
-        +r'|\\begin{ *(thebibliography) *}|\\begin{ *(verbatim\**) *}|\\begin{ *(table\**) *}|\\begin{ *(align\**) *}' \
-        +r'|\\begin{ *(displaymath\**) *}|\\begin{ *(gather\**) *}'
+    begin_patterns = r'\\begin{ *(equation)\** *}|\\begin{ *(align)\** *}|\\begin{ *(alignat)\** *}|\\begin{ *(figure)\** *}|\\begin{ *(eqnarray)\** *}|\\begin{ *(multline)\** *}' \
+        +r'|\\begin{ *(thebibliography) *}|\\begin{ *(verbatim)\** *}|\\begin{ *(table)\** *}|\\begin{ *(align)\** *}' \
+        +r'|\\begin{ *(displaymath)\** *}|\\begin{ *(gather)\** *}'
     if not ignore_subequations:
-        begin_patterns += r'|\\begin{ *(subequations\**) *}'
+        begin_patterns += r'|\\begin{ *(subequations)\** *}'
     if process_no_end_patterns:
         begin_patterns += r'|\\[a-z]*(ref){.*?}|\\(cite){.*?}|\\(footnote){.*?}|\\(index){.*?}'
+        # XXX: detect end of figure
+        begin_patterns += r'|(\\end{ *figure\** *})'
     end_patterns = r'\\end{ *equation\** *}|\\end{ *align\** *}|\\end{ *alignat\** *}|\\end{ *figure\** *}|\\end{ *eqnarray\** *}|\\end{ *multline\** *}' \
         +r'|\\end{ *thebibliography *}|\\end{ *verbatim\** *}|\\end{ *table\** *}|\\end{ *align\** *}' \
         +r'|\\end{ *displaymath\** *}|\\end{ *gather\** *}'
@@ -93,13 +95,25 @@ def convert_to(filename):
         end_patterns += r'|\\end{ *subequations\** *}'
 
     no_end_patterns = {}
+    in_figure = False
     for i, m in enumerate(re.finditer(begin_patterns,text)):
         # equation, align, alignat, etc.
         key = next((item for item in m.groups() if item), None)
+        if in_figure and 'end' in key and 'figure' in key:
+            in_figure = False
+            continue
+
         if process_no_end_patterns:
+            # ignore \ref, \cite etc. inside figure blocks
+            if in_figure:
+                continue
+
             if key in ['ref', 'cite', 'footnote', 'index']:
                 no_end_patterns[i] = m.start()
+
         start_values.append(m.start())
+        in_figure = key == 'figure'
+
     nitems=len(start_values)
     iter = re.finditer(end_patterns,text)
     for i in range(nitems):
