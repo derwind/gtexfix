@@ -12,9 +12,6 @@ import argparse
 # It's usually difficult to process nested begin-end such as '\begin{subequations}\begin{align}...\end{align}\end{subequations}'.
 ignore_subequations = True
 
-# \ref{...} or \cite{...} or \footnote{...} etc. are also processed.
-process_no_end_patterns = True
-
 def search_right_curly_bracket(text, start):
     bracket_count = 0
     for i, c in enumerate(text[start:]):
@@ -26,7 +23,7 @@ def search_right_curly_bracket(text, start):
                 return start + i + 1
     return start + 1
 
-def convert_to(filename):
+def convert_to(filename, ignore_no_end_patterns=False):
     if(re.search('.tex$',filename)==None):
         sys.exit('The input should be .tex file. Exit.')
 
@@ -84,10 +81,10 @@ def convert_to(filename):
         +r'|\\begin{ *(displaymath)\** *}|\\begin{ *(gather)\** *}'
     if not ignore_subequations:
         begin_patterns += r'|\\begin{ *(subequations)\** *}'
-    if process_no_end_patterns:
+    if not ignore_no_end_patterns:
         begin_patterns += r'|\\[a-z]*(ref){.*?}|\\(cite){.*?}|\\(footnote){.*?}|\\(index){.*?}'
         # XXX: detect end of figure
-        begin_patterns += r'|(\\end{ *figure\** *})'
+        begin_patterns += r'|(\\end{ *figure\** *})|(\\end{ *table\** *})'
     end_patterns = r'\\end{ *equation\** *}|\\end{ *align\** *}|\\end{ *alignat\** *}|\\end{ *figure\** *}|\\end{ *eqnarray\** *}|\\end{ *multline\** *}' \
         +r'|\\end{ *thebibliography *}|\\end{ *verbatim\** *}|\\end{ *table\** *}|\\end{ *align\** *}' \
         +r'|\\end{ *displaymath\** *}|\\end{ *gather\** *}'
@@ -96,6 +93,7 @@ def convert_to(filename):
 
     no_end_patterns = {}
     in_figure = False
+    in_table = False
     i = 0
     for m in re.finditer(begin_patterns,text):
         # equation, align, alignat, etc.
@@ -103,10 +101,13 @@ def convert_to(filename):
         if in_figure and 'end' in key and 'figure' in key:
             in_figure = False
             continue
+        if in_table and 'end' in key and 'table' in key:
+            in_table = False
+            continue
 
-        if process_no_end_patterns:
+        if not ignore_no_end_patterns:
             # ignore \ref, \cite etc. inside figure blocks
-            if in_figure:
+            if in_figure or in_table:
                 continue
 
             if key in ['ref', 'cite', 'footnote', 'index']:
@@ -114,13 +115,14 @@ def convert_to(filename):
 
         start_values.append(m.start())
         in_figure = key == 'figure'
+        in_table = key == 'table'
         i += 1
 
     nitems=len(start_values)
     iter = re.finditer(end_patterns,text)
     for i in range(nitems):
         # if next pattern has no end pattern
-        if process_no_end_patterns and i in no_end_patterns:
+        if not ignore_no_end_patterns and i in no_end_patterns:
             start = no_end_patterns[i]
             end = search_right_curly_bracket(text, start)
             end_values.append(end)
@@ -196,9 +198,10 @@ def convert_to(filename):
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--ignore-no-end-patterns', action='store_true', help=r'\ref{...} or \cite{...} or \footnote{...} etc. are ignored and are not processed.')
     parser.add_argument('filename')
     args = parser.parse_args()
-    convert_to(args.filename)
+    convert_to(args.filename, args.ignore_no_end_patterns)
 
 if __name__ == '__main__':
     main()

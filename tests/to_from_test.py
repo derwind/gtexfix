@@ -39,10 +39,12 @@ class ToFromTest(unittest.TestCase):
         converted_text_file = os.path.join(file_dir, "example_0.txt")
         converted_tex_file = os.path.join(file_dir, "example_0.tex")
         shutil.copy2(os.path.join(file_dir, "..", "examples", "example.tex"), target_tex_file)
-        convert_to(target_tex_file)
-        convert_from(converted_text_file)
+        for ignore_no_end_patterns in [False, True]:
+            with self.subTest(f'{ignore_no_end_patterns=}'):
+                convert_to(target_tex_file, ignore_no_end_patterns)
+                convert_from(converted_text_file)
 
-        self.assertEqual(md5sum(target_tex_file), md5sum(converted_tex_file))
+            self.assertEqual(md5sum(target_tex_file), md5sum(converted_tex_file))
 
 if __name__ == '__main__':
     sys.exit(unittest.main())
