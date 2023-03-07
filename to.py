@@ -82,7 +82,7 @@ def convert_to(filename, ignore_no_end_patterns=False):
     if not ignore_subequations:
         begin_patterns += r'|\\begin{ *(subequations)\** *}'
     if not ignore_no_end_patterns:
-        begin_patterns += r'|\\[a-z]*(ref){.*?}|\\(cite){.*?}|\\(footnote){.*?}|\\(index){.*?}'
+        begin_patterns += r'|\\[a-z]*(ref) *{.*?}|\\(cite)\S* *{.*?}|\\(footnote) *{.*?}|\\(index) *{.*?}'
         # XXX: detect end of figure
         begin_patterns += r'|(\\end{ *figure\** *})|(\\end{ *table\** *})'
     end_patterns = r'\\end{ *equation\** *}|\\end{ *align\** *}|\\end{ *alignat\** *}|\\end{ *figure\** *}|\\end{ *eqnarray\** *}|\\end{ *multline\** *}' \
