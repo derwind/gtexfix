@@ -8,9 +8,9 @@ temp_files = list(map(lambda v: os.path.join(file_dir, v), [
     "example.tex",
     "example_0.txt",
     "example_0.tex",
-    "gtexfix_commands",
-    "gtexfix_comments",
-    "gtexfix_latex",
+    "example_gtexfix_commands",
+    "example_gtexfix_comments",
+    "example_gtexfix_latex",
 ]))
 
 def md5sum(file):

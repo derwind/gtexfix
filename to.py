@@ -32,6 +32,8 @@ def convert_to(filename, ignore_no_end_patterns=False):
     with open(filename, 'r') as source_file:
         source = source_file.read()
 
+    filebase = re.sub('.tex$','',filename)
+
     ### Search for possible token conflicts
     conflicts=re.findall(r'\\[ *[012][\\.][0-9]+\\]',source)
     if(conflicts!=[]):
@@ -69,7 +71,7 @@ def convert_to(filename, ignore_no_end_patterns=False):
         ncomment += 1
         return '___GTEXFIXCOMMENT%d___'%(ncomment-1)
     text=recomment.sub(repl_comment,text)
-    with open('gtexfix_comments', 'wb') as fp:
+    with open(f'{filebase}_gtexfix_comments', 'wb') as fp:
         pickle.dump(comments, fp)
 
     ### Hide LaTeX constructs \begin{...} ... \end{...}
@@ -153,7 +155,7 @@ def convert_to(filename, ignore_no_end_patterns=False):
     if(postamble!=[]):
         latex.append(postamble)
         text += '[1.%d]'%(len(latex)-1)
-    with open('gtexfix_latex', 'wb') as fp:
+    with open(f'{filebase}_gtexfix_latex', 'wb') as fp:
         pickle.dump(latex, fp)
 
     ### Replace LaTeX commands, formulas and comments by tokens
@@ -170,13 +172,13 @@ def convert_to(filename, ignore_no_end_patterns=False):
         nc += 1
         return '[2.%d]'%(nc-1)
     text=recommand.sub(repl_f,text)
-    with open('gtexfix_commands', 'wb') as fp:
+    with open(f'{filebase}_gtexfix_commands', 'wb') as fp:
         pickle.dump(commands, fp)
 
     ### Save the processed output to .txt file
     #limit=30000 # Estimated Google Translate character limit
     limit=200000
-    filebase = re.sub('.tex$','',filename)
+    #filebase = re.sub('.tex$','',filename)
     start=0
     npart=0
     for m in re.finditer(r'\.\n',text):

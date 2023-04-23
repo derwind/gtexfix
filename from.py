@@ -22,12 +22,13 @@ def convert_from(filename):
     ### Load LaTeX data from binary files
     with open(filename, 'r') as fin:
         source = fin.read()
-    with open ('gtexfix_comments', 'rb') as fp:
+    filebase = re.sub('_\d+.txt$','',filename)
+    with open (f'{filebase}_gtexfix_comments', 'rb') as fp:
         comments = {token_id: v for token_id, v in enumerate(pickle.load(fp))}
-    with open ('gtexfix_commands', 'rb') as fp:
+    with open (f'{filebase}_gtexfix_commands', 'rb') as fp:
         # [2.x]
         commands = {token_id: v for token_id, v in enumerate(pickle.load(fp))}
-    with open ('gtexfix_latex', 'rb') as fp:
+    with open (f'{filebase}_gtexfix_latex', 'rb') as fp:
         # [1.x]
         latex = {token_id: v for token_id, v in enumerate(pickle.load(fp))}
 
