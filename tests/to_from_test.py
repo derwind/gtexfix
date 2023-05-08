@@ -20,8 +20,8 @@ def md5sum(file):
 
 class ToFromTest(unittest.TestCase):
     def setUp(self):
-        shutil.copy2(os.path.join(file_dir, "..", "to.py"), os.path.join(file_dir, "to2.py"))
-        shutil.copy2(os.path.join(file_dir, "..", "from.py"), os.path.join(file_dir, "from2.py"))
+        shutil.copy2(os.path.join(file_dir, "..", "gtexfix", "to.py"), os.path.join(file_dir, "to2.py"))
+        shutil.copy2(os.path.join(file_dir, "..", "gtexfix", "from.py"), os.path.join(file_dir, "from2.py"))
 
     def tearDown(self):
         for file in temp_files + [os.path.join(file_dir, "to2.py"), os.path.join(file_dir, "from2.py")]:

@@ -1,15 +1,15 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='gtexfix',
-    version="0.1",
-    py_modules = ['to', 'from_'],
+    version='0.1',
+    description='gtexfix',
+    packages=['gtexfix'],
     entry_points={
         'console_scripts': [
-            'gtexfixto = to:main',
-            'gtexfixfrom = from_:main',
+            'gtexfixto = gtexfix.to:main',
+            'gtexfixfrom = gtexfix.from_:main',
         ]
     },
-    description='gtexfix',
     install_requires=[],
 )
