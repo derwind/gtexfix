@@ -80,7 +80,7 @@ def convert_to(filename, ignore_no_end_patterns=False):
 
     begin_patterns = r'\\begin{ *(equation)\** *}|\\begin{ *(align)\** *}|\\begin{ *(alignat)\** *}|\\begin{ *(figure)\** *}|\\begin{ *(eqnarray)\** *}|\\begin{ *(multline)\** *}' \
         +r'|\\begin{ *(thebibliography) *}|\\begin{ *(verbatim)\** *}|\\begin{ *(table)\** *}|\\begin{ *(align)\** *}' \
-        +r'|\\begin{ *(displaymath)\** *}|\\begin{ *(gather)\** *}|\\begin{ *(center)\** *}'
+        +r'|\\begin{ *(displaymath)\** *}|\\begin{ *(gather)\** *}|\\begin{ *(center)\** *}|\\begin{ *(algorithm)\** *}'
     if not ignore_subequations:
         begin_patterns += r'|\\begin{ *(subequations)\** *}'
     if not ignore_no_end_patterns:
@@ -89,7 +89,7 @@ def convert_to(filename, ignore_no_end_patterns=False):
         begin_patterns += r'|(\\end{ *figure\** *})|(\\end{ *table\** *})'
     end_patterns = r'\\end{ *equation\** *}|\\end{ *align\** *}|\\end{ *alignat\** *}|\\end{ *figure\** *}|\\end{ *eqnarray\** *}|\\end{ *multline\** *}' \
         +r'|\\end{ *thebibliography *}|\\end{ *verbatim\** *}|\\end{ *table\** *}|\\end{ *align\** *}' \
-        +r'|\\end{ *displaymath\** *}|\\end{ *gather\** *}|\\end{ *center\** *}'
+        +r'|\\end{ *displaymath\** *}|\\end{ *gather\** *}|\\end{ *center\** *}|\\end{ *algorithm\** *}'
     if not ignore_subequations:
         end_patterns += r'|\\end{ *subequations\** *}'
 
