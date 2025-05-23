@@ -24,7 +24,7 @@ def search_right_curly_bracket(text, start):
     return start + 1
 
 def convert_to(filename, ignore_no_end_patterns=False):
-    if(re.search('.tex$',filename)==None):
+    if(re.search(r'.tex$',filename)==None):
         sys.exit('The input should be .tex file. Exit.')
 
     print('LaTeX file:',filename)
@@ -32,10 +32,10 @@ def convert_to(filename, ignore_no_end_patterns=False):
     with open(filename, 'r') as source_file:
         source = source_file.read()
 
-    filebase = re.sub('.tex$','',filename)
+    filebase = re.sub(r'.tex$','',filename)
 
     ### Search for possible token conflicts
-    conflicts=re.findall('\[ *[012][\.\,][0-9]+\]',source)
+    conflicts=re.findall(r'\[ *[012][\.\,][0-9]+\]',source)
     if(conflicts!=[]):
         print('Token conflicts detected: ',conflicts)
         sys.exit('Tokens may overlap with the content. Change tokens or remove the source of conflict.')
