@@ -23,8 +23,8 @@ def search_right_curly_bracket(text, start):
                 return start + i + 1
     return start + 1
 
-def convert_to(filename, ignore_no_end_patterns=False):
-    if(re.search(r'.tex$',filename)==None):
+def convert_to(filename, ignore_no_end_patterns=False, escape_only_display_math=False):
+    if(re.search('.tex$',filename)==None):
         sys.exit('The input should be .tex file. Exit.')
 
     print('LaTeX file:',filename)
@@ -161,10 +161,13 @@ def convert_to(filename, ignore_no_end_patterns=False):
     ### Replace LaTeX commands, formulas and comments by tokens
     # Regular expression r'(\$+)(?:(?!\1)[\s\S])*\1' for treatment of $...$ and $$...$$ from:
     # https://stackoverflow.com/questions/54663900/ how-to-use-regular-expression-to-remove-all-math-expression-in-latex-file
-    recommand = re.compile(r'___GTEXFIXCOMMENT[0-9]*___|\\title|\\chapter\**|\\section\**|\\subsection\**|  \\subsubsection\**|~*\\footnote[0-9]*|(\$+)(?:(?!\1)[\s\S])*\1|~*\\\w*\s*{[^}]*}\s*{[^}]*}|~*\\\w*\s*{[^}]    *}|~*\\\w*')
     commands=[]
-    for m in recommand.finditer(text):
-        commands.append(m.group())
+    if escape_only_display_math:
+        recommand = re.compile(r'___GTEXFIXCOMMENT[0-9]*___')
+    else:
+        recommand = re.compile(r'___GTEXFIXCOMMENT[0-9]*___|\\title|\\chapter\**|\\section\**|\\subsection\**|  \\subsubsection\**|~*\\footnote[0-9]*|(\$+)(?:(?!\1)[\s\S])*\1|~*\\\w*\s*{[^}]*}\s*{[^}]*}|~*\\\w*\s*{[^}]    *}|~*\\\w*')
+        for m in recommand.finditer(text):
+            commands.append(m.group())
     global nc
     nc=0
     def repl_f(obj):
@@ -201,9 +204,10 @@ def convert_to(filename, ignore_no_end_patterns=False):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--ignore-no-end-patterns', action='store_true', help=r'\ref{...} or \cite{...} or \footnote{...} etc. are ignored and are not processed.')
+    parser.add_argument('--escape-only-display-math', action='store_true', help=r'Only display math mode is escaped. All other math modes are ignored.')
     parser.add_argument('filename')
     args = parser.parse_args()
-    convert_to(args.filename, args.ignore_no_end_patterns)
+    convert_to(args.filename, args.ignore_no_end_patterns, args.escape_only_display_math)
 
 if __name__ == '__main__':
     main()
