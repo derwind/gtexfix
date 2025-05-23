@@ -24,7 +24,7 @@ def search_right_curly_bracket(text, start):
     return start + 1
 
 def convert_to(filename, ignore_no_end_patterns=False, escape_only_display_math=False):
-    if(re.search('.tex$',filename)==None):
+    if(re.search(r'.tex$',filename)==None):
         sys.exit('The input should be .tex file. Exit.')
 
     print('LaTeX file:',filename)
