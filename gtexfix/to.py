@@ -166,8 +166,8 @@ def convert_to(filename, ignore_no_end_patterns=False, escape_only_display_math=
         recommand = re.compile(r'___GTEXFIXCOMMENT[0-9]*___')
     else:
         recommand = re.compile(r'___GTEXFIXCOMMENT[0-9]*___|\\title|\\chapter\**|\\section\**|\\subsection\**|  \\subsubsection\**|~*\\footnote[0-9]*|(\$+)(?:(?!\1)[\s\S])*\1|~*\\\w*\s*{[^}]*}\s*{[^}]*}|~*\\\w*\s*{[^}]    *}|~*\\\w*')
-        for m in recommand.finditer(text):
-            commands.append(m.group())
+    for m in recommand.finditer(text):
+        commands.append(m.group())
     global nc
     nc=0
     def repl_f(obj):
